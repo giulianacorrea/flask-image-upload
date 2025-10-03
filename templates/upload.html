@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Imagem</title>
+    <!-- Link para o Bootstrap local -->
+    <link href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Por favor selecione uma imagem</h2>
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <input type="file" class="form-control" name="file" required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Upload</button>
+        </form>
+
+        {% if filename %}
+            <h3 class="mt-4 text-center">Imagem carregada com sucesso!</h3>
+            <div class="text-center">
+                <img src="{{ url_for('static', filename='imagens/' + filename) }}" alt="Imagem" class="img-fluid mt-3">
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Script do Bootstrap local -->
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>
