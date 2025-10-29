@@ -1,6 +1,6 @@
 import logging
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 from core.config import Config  
 from core.erro import ErrorHandler  
 
@@ -8,13 +8,16 @@ app = Flask(__name__)
 
 config = Config(app) #passando o app p  config 
 
+app.secret_key = os.urandom(24)
 
 logging.basicConfig(level=logging.DEBUG)  
 app.logger.info('Aplicação Flask iniciada')  
 
-# Função para verificar a extensão do arquivo
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+
 
 @app.route('/')
 def login():
@@ -35,6 +38,17 @@ def do_login():
     app.logger.warning(f'Falha no login para o usuário: {username}')  
     return "Login falhou, tente novamente."
 
+@app.route('/')
+def dashboard():
+    username = 'admin'  
+    return render_template('principal.html', username=username)
+
+@app.route('/logout')
+def logout():
+
+    session.clear()
+    app.logger.info('Usuário deslogado com sucesso!')
+    return redirect(url_for('dashboard')) 
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -44,10 +58,10 @@ def upload():
             filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(filename)
             app.logger.info(f'Imagem {file.filename} salva com sucesso!')  
-            return render_template('upload.html', filename=file.filename)
+            return render_template('principal.html', filename=file.filename)
         else:
             app.logger.warning(f'Arquivo inválido: {file.filename}')  
-    return render_template('upload.html', filename=None)
+    return render_template('principal.html', filename=None)
  
 
 if __name__ == "__main__":
